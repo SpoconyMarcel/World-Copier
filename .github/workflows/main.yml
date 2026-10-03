@@ -1,0 +1,46 @@
+name: Build mod
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:   # ręczne uruchomienie z zakładki Actions
+
+permissions:
+  contents: write      # potrzebne do wrzucania jara do Releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # Instaluje Gradle'a, więc działa nawet bez gradlew w repo
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.12
+
+      - name: Build
+        run: gradle build --no-daemon
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-copier
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+
+      - name: Publish release (tylko dla tagów v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
