@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "world_copier",
+  "version": "${version}",
+  "name": "World Copier",
+  "description": "Zapisuje chunki odwiedzone na serwerze do lokalnego folderu.",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.worldcopier.WorldCopierClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
